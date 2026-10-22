@@ -1,0 +1,22 @@
+<Project Sdk="Godot.NET.Sdk/4.8.0-dev.6">
+
+  <!--
+    Godot.NET.Sdk sets no TargetFramework; GodotSharp 4.8.0-dev.6 ships lib/net8.0 only. We target net10.0 because it is
+    the only runtime installed here and Spayly.Sim is net10.0 (a net8.0 project cannot reference it: NU1201).
+  -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Spayly.Game</RootNamespace>
+  </PropertyGroup>
+
+  <!--
+    Physics is built optimised even when the game is a Debug build (what Godot and tools/run-capture.sh load): unoptimised
+    JIT code made the 4200-particle belt step alone cost ~5 ms a frame and a budget-limited warp frame ~17 ms.
+  -->
+  <ItemGroup>
+    <ProjectReference Include="../Spayly.Sim/Spayly.Sim.csproj" SetConfiguration="Configuration=Release" />
+  </ItemGroup>
+
+</Project>

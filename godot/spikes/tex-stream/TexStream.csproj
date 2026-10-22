@@ -1,0 +1,11 @@
+<Project Sdk="Godot.NET.Sdk/4.8.0-dev.6">
+
+  <!-- Same pattern as Spayly.Game: GodotSharp ships net8.0 only, but net10.0 is the only runtime installed here. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+    <Nullable>enable</Nullable>
+    <RootNamespace>TexStream</RootNamespace>
+  </PropertyGroup>
+
+</Project>

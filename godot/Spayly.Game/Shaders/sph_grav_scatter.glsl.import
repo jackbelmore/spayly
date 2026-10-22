@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://cquxiu6emylvd"
+path="res://.godot/imported/sph_grav_scatter.glsl-e851afddd73d7410335c1ad718980600.res"
+
+[deps]
+
+source_file="res://Shaders/sph_grav_scatter.glsl"
+dest_files=["res://.godot/imported/sph_grav_scatter.glsl-e851afddd73d7410335c1ad718980600.res"]
+
+[params]
+

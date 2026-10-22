@@ -1,0 +1,31 @@
+; Engine configuration file.
+; Spike M1b: engine texture streaming of a 16384x8192 map. CaptureDriver is the shared harness autoload.
+
+config_version=5
+
+[application]
+
+config/name="TexStream"
+run/main_scene="res://Main.tscn"
+config/features=PackedStringArray("4.8", "C#", "Forward Plus")
+
+[autoload]
+
+CaptureDriver="*res://CaptureDriver.cs"
+
+[display]
+
+window/size/viewport_width=1600
+window/size/viewport_height=900
+window/vsync/vsync_mode=0
+
+[dotnet]
+
+project/assembly_name="TexStream"
+
+[rendering]
+
+renderer/rendering_method="forward_plus"
+textures/streaming/enabled=true
+textures/streaming/memory_budget_enabled=true
+textures/streaming/memory_budget_mb=2048

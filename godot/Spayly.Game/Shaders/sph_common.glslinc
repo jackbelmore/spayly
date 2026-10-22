@@ -1,0 +1,156 @@
+// Shared by every sph_*.glsl compute shader. SphGpu inlines it at load (runtime GLSL compile, as spike M1a); Godot's own
+// RDShaderFile importer resolves the same #include if it ever imports the .glsl files. Declares no resources, so a shader
+// only reflects the bindings it uses. Mirrors Spayly.Sim/Sph: SI units, float32 positions relative to the collision's CM.
+
+#ifndef WG
+#define WG 128
+#endif
+
+// One layout for every kernel (80 bytes); each reads the fields it needs. SphGpu.Pc is the C# twin.
+layout(push_constant, std430) uniform PC {
+  uint n;          // particles
+  uint mask;       // hash table size - 1
+  float cell;      // neighbour-grid cell, m (= 2 h_ref; also the h cap)
+  float inv_cell;
+  float eta;       // h = eta (m/rho)^(1/3)
+  float h_min;
+  float h_max;
+  float eps2;      // Plummer softening squared, m^2
+  float alpha;     // Monaghan AV
+  float beta;
+  float courant;
+  float acc_factor;
+  float grav_factor;
+  float G;         // m^3 kg^-1 s^-2
+  float p_floor;   // Pa
+  uint flags;      // FLAG_*
+  float g_box;     // gravity pyramid half-size, m
+  float theta;     // Barnes-Hut opening angle
+  uint levels;     // finest pyramid level (leaves are 8^levels)
+  uint count;      // per-dispatch element count / level / texture width
+} pc;
+
+const uint FLAG_BALSARA = 1u;
+const uint FLAG_TREE = 2u;
+
+// Stencil half-width in cells: h <= cell, so 2h never reaches past two cells.
+const int STENCIL = 2;
+
+// Spike M1a's "block" key: 4x4x4 cells share 64 consecutive buckets, only the block index is hashed. Bit for bit the
+// C# UniformGrid.Key.
+uint cell_hash(ivec3 c) {
+  return (uint(c.x) * 73856093u) ^ (uint(c.y) * 19349663u) ^ (uint(c.z) * 83492791u);
+}
+uint cell_key(ivec3 c) {
+  uvec3 l = uvec3(c & 3);
+  return ((cell_hash(c >> 2) << 6u) | l.x | (l.y << 2u) | (l.z << 4u)) & pc.mask;
+}
+ivec3 cell_of(vec3 p) {
+  return ivec3(clamp(floor(p * pc.inv_cell), vec3(-268435456.0), vec3(268435456.0)));
+}
+// Squared distance from p to cell c's box; 0 inside.
+float box_dist2(vec3 p, ivec3 c) {
+  vec3 lo = vec3(c) * pc.cell;
+  vec3 d = max(max(lo - p, p - (lo + pc.cell)), vec3(0.0));
+  return dot(d, d);
+}
+
+// M4 cubic spline (Monaghan & Lattanzio 1985), support 2h; Kernel.cs.
+const float INV_PI = 0.3183098861837907;
+float kernel_w(float r, float h) {
+  float q = r / h;
+  float s = INV_PI / (h * h * h);
+  if (q < 1.0) return s * (1.0 - 1.5 * q * q + 0.75 * q * q * q);
+  if (q < 2.0) { float t = 2.0 - q; return s * 0.25 * t * t * t; }
+  return 0.0;
+}
+float kernel_dw(float r, float h) {
+  float q = r / h;
+  float s = INV_PI / (h * h * h * h);
+  if (q < 1.0) return s * (-3.0 * q + 2.25 * q * q);
+  if (q < 2.0) { float t = 2.0 - q; return -s * 0.75 * t * t; }
+  return 0.0;
+}
+
+// Tillotson (1962) as in Tillotson.cs; returns (P, dP/drho, dP/du), unclamped.
+struct Mat { float rho0; float A; float B; float E0; float Eiv; float Ecv; float a; float b; float alpha; float beta; };
+
+vec3 till_compressed(Mat m, float rho, float u) {
+  float eta = max(rho / m.rho0, 1e-6);
+  float mu = eta - 1.0;
+  float e0eta2 = m.E0 * eta * eta;
+  float omega = u / e0eta2 + 1.0;
+  float bw = m.b / omega;
+  float bw2 = m.b / (omega * omega * e0eta2);
+  float p = (m.a + bw) * rho * u + m.A * mu + m.B * mu * mu;
+  float dr = (m.a + bw) * u + 2.0 * bw2 * u * u + (m.A + 2.0 * m.B * mu) / m.rho0;
+  float du = (m.a + bw) * rho - bw2 * rho * u;
+  return vec3(p, dr, du);
+}
+
+vec3 till_expanded(Mat m, float rho, float u) {
+  float z = m.rho0 / rho - 1.0;
+  if (z > 8.0) return vec3(m.a * rho * u, m.a * u, m.a * rho);
+  float eta = rho / m.rho0;
+  float mu = eta - 1.0;
+  float e0eta2 = m.E0 * eta * eta;
+  float omega = u / e0eta2 + 1.0;
+  float bw = m.b / omega;
+  float bw2 = m.b / (omega * omega * e0eta2);
+  float dz = -m.rho0 / (rho * rho);
+  float e1 = exp(-m.beta * z);
+  float e2 = exp(-m.alpha * z * z);
+  float t = bw * rho * u + m.A * mu * e1;
+  float dtr = bw * u + 2.0 * bw2 * u * u + m.A * e1 / m.rho0 - m.A * mu * e1 * m.beta * dz;
+  float dtu = bw * rho - bw2 * rho * u;
+  return vec3(m.a * rho * u + t * e2, m.a * u + e2 * (dtr - t * 2.0 * m.alpha * z * dz), m.a * rho + e2 * dtu);
+}
+
+vec3 tillotson(Mat m, float rho, float u) {
+  if (rho >= m.rho0 || u <= m.Eiv) return till_compressed(m, rho, u);
+  if (u >= m.Ecv) return till_expanded(m, rho, u);
+  vec3 c = till_compressed(m, rho, u);
+  vec3 e = till_expanded(m, rho, u);
+  float span = m.Ecv - m.Eiv;
+  float we = (u - m.Eiv) / span;
+  float wc = (m.Ecv - u) / span;
+  return vec3(we * e.x + wc * c.x, we * e.y + wc * c.y, (e.x - c.x) / span + we * e.z + wc * c.z);
+}
+
+// Cold-compression energy, J/kg (Tillotson.ColdEnergy).
+float cold_energy(Mat m, float rho) {
+  float mu = rho / m.rho0 - 1.0;
+  if (mu <= 0.0) return 0.0;
+  float l = log(1.0 + mu);
+  float inv = 1.0 / (1.0 + mu);
+  return (m.A * (l + inv - 1.0) + m.B * (mu - 2.0 * l - inv + 1.0)) / m.rho0;
+}
+
+// Morton interleave of 10-bit coordinates, x in bit 0 (the usual "part 1 by 2" bit tricks).
+uint part1by2(uint x) {
+  x &= 0x000003FFu;
+  x = (x | (x << 16u)) & 0x030000FFu;
+  x = (x | (x << 8u)) & 0x0300F00Fu;
+  x = (x | (x << 4u)) & 0x030C30C3u;
+  x = (x | (x << 2u)) & 0x09249249u;
+  return x;
+}
+uint compact1by2(uint x) {
+  x &= 0x09249249u;
+  x = (x ^ (x >> 2u)) & 0x030C30C3u;
+  x = (x ^ (x >> 4u)) & 0x0300F00Fu;
+  x = (x ^ (x >> 8u)) & 0x030000FFu;
+  x = (x ^ (x >> 16u)) & 0x000003FFu;
+  return x;
+}
+uint morton3(uvec3 c) { return part1by2(c.x) | (part1by2(c.y) << 1u) | (part1by2(c.z) << 2u); }
+uvec3 demorton3(uint m) { return uvec3(compact1by2(m), compact1by2(m >> 1u), compact1by2(m >> 2u)); }
+// First node of pyramid level l: (8^l - 1) / 7.
+uint level_offset(uint l) { return ((1u << (3u * l)) - 1u) / 7u; }
+// Finest-level (leaf) Morton code of a position, clamped into the box.
+uint leaf_code(vec3 p) {
+  float side = float(1u << pc.levels);
+  vec3 f = (p + vec3(pc.g_box)) * (side / (2.0 * pc.g_box));
+  uvec3 c = uvec3(clamp(floor(f), vec3(0.0), vec3(side - 1.0)));
+  return morton3(c);
+}

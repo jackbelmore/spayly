@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://b5iisjya428pc"
+path="res://.godot/imported/sph_grav_walk.glsl-aab1bc1d3f99db4d81a2a20496e38893.res"
+
+[deps]
+
+source_file="res://Shaders/sph_grav_walk.glsl"
+dest_files=["res://.godot/imported/sph_grav_walk.glsl-aab1bc1d3f99db4d81a2a20496e38893.res"]
+
+[params]
+

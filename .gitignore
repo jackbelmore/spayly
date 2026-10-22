@@ -1,0 +1,60 @@
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors / IDEs
+.vscode/
+.idea/
+*.swp
+*~
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Logs
+*.log
+logs/
+
+# Dependencies & build output
+node_modules/
+dist/
+build/
+out/
+bin/
+obj/
+target/
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Local tooling output
+shots/
+test-results/
+playwright-report/
+.vite/
+*.tsbuildinfo
+.assets-raw/
+
+# Claude Code local overrides (the committed .claude/ files are shared)
+.claude/settings.local.json
+
+# Godot API dump (regenerate: godot --doctool docs/godot/api-dump; docs/godot/decisions.md cites it)
+docs/godot/api-dump/
+
+# Godot
+godot/**/.godot/
+godot/**/capture/
+godot/.godot-lock
+godot/spikes/*/textures/
+godot/Spayly.Game/textures
+godot/parity/web/
+godot/parity/godot/
+
+# Agent worktrees
+.claude/worktrees/

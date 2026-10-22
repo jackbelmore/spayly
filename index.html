@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>spayly</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%2711%27 fill=%27%236fa8ff%27/%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%2715%27 fill=%27none%27 stroke=%27%23ffd27a%27 stroke-width=%271.5%27/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <div id="stage"></div>
+  <div id="labels"></div>
+  <div id="hud">
+    <header id="top" class="panel">
+      <div class="brand">spayly</div>
+      <div id="clock"><span id="date">—</span><span id="warp-label" class="muted">real time</span></div>
+      <div class="time-controls">
+        <button id="btn-rewind" title="Rewind (R)">◀◀</button>
+        <button id="btn-pause" title="Pause (Space)">&#10073;&#10073;</button>
+        <button id="btn-slower" title="Slower ([)">−</button>
+        <input id="warp" type="range" min="0" max="8" step="0.01" value="0" title="Time warp" />
+        <button id="btn-faster" title="Faster (])">+</button>
+      </div>
+      <div id="status" class="muted">
+        <span id="fps"></span>
+        <span id="physics"></span>
+        <span id="limited" title="The time warp is asking for more integration steps than one frame can afford, so time is running slower than the dial says. Nothing is being skipped. Fewer moons (View panel) or a lower warp clears it.">limited</span>
+      </div>
+      <button id="btn-help" title="Help (H)">?</button>
+    </header>
+
+    <aside id="left">
+      <section class="panel">
+        <h3>Bodies</h3>
+        <div id="body-list"></div>
+      </section>
+      <section class="panel">
+        <h3>View</h3>
+        <div class="row">
+          <button id="view-tabletop" title="Whole system on a table (T)">Tabletop</button>
+          <button id="view-inner">Inner system</button>
+          <button id="view-outer">Outer system</button>
+        </div>
+        <label class="field">Texture detail <span class="muted">(maps sharpen as you fly closer)</span>
+          <select id="opt-textures">
+            <option value="16384">Ultra — up to 16K</option>
+            <option value="8192" selected>High — up to 8K</option>
+            <option value="4096">Medium — up to 4K</option>
+            <option value="2048">Low — up to 2K</option>
+          </select>
+        </label>
+        <label class="field">Moons <span class="muted">(fewer = higher warp)</span>
+          <select id="opt-moons">
+            <option value="all" selected>All 23</option>
+            <option value="major">Major only</option>
+            <option value="none">None</option>
+          </select>
+        </label>
+        <label class="toggle"><input type="checkbox" id="opt-diorama" /> Diorama scale <span class="muted">(bodies enlarged, physics untouched)</span></label>
+        <label class="toggle"><input type="checkbox" id="opt-orbits" checked /> Orbits</label>
+        <label class="toggle"><input type="checkbox" id="opt-trails" checked /> Trails</label>
+        <label class="toggle"><input type="checkbox" id="opt-labels" checked /> Labels</label>
+        <label class="toggle"><input type="checkbox" id="opt-belt" checked /> Asteroid and Kuiper belts</label>
+        <label class="toggle"><input type="checkbox" id="opt-bloom" checked /> Bloom</label>
+        <label class="toggle"><input type="checkbox" id="opt-cinematic" checked /> Cinematic impact camera</label>
+        <label class="field">Sunlight falloff
+          <select id="opt-falloff">
+            <option value="0.5" selected>Balanced</option>
+            <option value="2">Physical (1/r²)</option>
+            <option value="0">Flat</option>
+          </select>
+        </label>
+      </section>
+    </aside>
+
+    <aside id="right">
+      <section class="panel" id="inspector">
+        <h3 id="insp-name">—</h3>
+        <div id="insp-kind" class="muted"></div>
+        <div class="row">
+          <button id="btn-follow">Follow</button>
+          <button id="btn-above">Above</button>
+          <button id="btn-reset-body">Reset</button>
+        </div>
+        <label class="field">Mass <span id="mass-val" class="val"></span>
+          <input type="range" id="mass" min="-3" max="3" step="0.01" value="0" />
+        </label>
+        <label class="field">Radius <span id="radius-val" class="val"></span>
+          <input type="range" id="radius" min="-1" max="1" step="0.01" value="0" />
+        </label>
+        <dl id="insp-stats"></dl>
+      </section>
+    </aside>
+
+    <footer id="bottom">
+      <div class="panel" id="mode-panel">
+        <div class="modes">
+          <button id="mode-explore" class="active">Explore</button>
+          <button id="mode-asteroid">Asteroid mode <span class="key">X</span></button>
+          <button id="mode-erase" title="Drag over the view to delete asteroids and fragments">Erase rocks <span class="key">Z</span></button>
+        </div>
+        <div id="erase-panel" class="hidden">
+          <div class="muted">Drag over the view to delete asteroids and fragments. The wheel resizes the brush; planets, moons and the Sun are never touched.</div>
+        </div>
+        <div id="asteroid-panel" class="hidden">
+          <div class="presets" id="presets"></div>
+          <div class="row wrap">
+            <label class="field">Diameter <span id="ast-diam-val" class="val"></span>
+              <input type="range" id="ast-diam" min="0" max="6.6" step="0.01" value="1.3" />
+            </label>
+            <label class="field">Speed <span id="ast-speed-val" class="val"></span>
+              <input type="range" id="ast-speed" min="0" max="2.5" step="0.01" value="1.3" />
+            </label>
+            <label class="field">Composition
+              <select id="ast-comp">
+                <option value="rock">Rocky · 3000 kg/m³</option>
+                <option value="iron">Iron · 7800 kg/m³</option>
+                <option value="carbon">Carbonaceous · 1500 kg/m³</option>
+                <option value="ice">Icy comet · 900 kg/m³</option>
+              </select>
+            </label>
+          </div>
+          <div id="aim-readout" class="muted">Click a body to fire from the camera. Drag on empty space to aim by hand.</div>
+        </div>
+      </div>
+    </footer>
+
+    <div id="brush"></div>
+
+    <div id="hint"></div>
+
+    <div id="report" class="panel hidden">
+      <div class="report-head"><h3 id="report-title">Impact</h3><button id="report-close" title="Close">×</button></div>
+      <p id="report-class" class="classification"></p>
+      <dl id="report-stats"></dl>
+      <p id="report-compare" class="muted"></p>
+      <div class="row">
+        <button id="btn-undo">Undo impact</button>
+        <button id="btn-goto-impact">Look at it</button>
+      </div>
+    </div>
+
+    <div id="help" class="hidden">
+      <div class="panel help-panel">
+        <h3>spayly · controls</h3>
+        <dl>
+          <dt>Drag</dt><dd>orbit the view · right-drag or shift-drag pans · wheel zooms (log scale)</dd>
+          <dt>W A S D</dt><dd>pan the view; hold shift to move faster. Panning keeps following whatever you are following.</dd>
+          <dt>Q · E</dt><dd>swing the camera left and right around what it is looking at</dd>
+          <dt>Click / double-click</dt><dd>select a body / fly to it — on the body itself or on its name in the view</dd>
+          <dt>Space, [ ]</dt><dd>pause · slower · faster</dd>
+          <dt>R</dt><dd>rewind time (gravity is time-reversible; impacts are undone from the report card)</dd>
+          <dt>Z</dt><dd>erase mode: drag over the view to delete asteroids and fragments, wheel resizes the brush</dd>
+          <dt>X</dt><dd>asteroid mode: click a body to fire from the camera with auto-aim, or drag on empty space to aim by hand. Rocks you fire are ordinary bodies — shoot one at another and they pull on each other, swing around each other, and collide.</dd>
+          <dt>F · T · 1–9, 0</dt><dd>fly above the selection · tabletop view · select Sun, Mercury … Neptune, Pluto</dd>
+          <dt>Sliders</dt><dd>change any body's mass or radius live. The Sun's luminosity and colour follow its mass; watch Earth freeze or scorch.</dd>
+          <dt>Escape</dt><dd>back to explore mode, cancel aiming, close panels</dd>
+        </dl>
+        <p class="muted">Physics: full mutual N-body gravity (symplectic leapfrog, adaptive substeps with swept-sphere contact detection),
+          IAU rotation poles, Standish planetary ephemeris, JPL satellite and small-body elements, Collins–Melosh–Marcus impact effects,
+          Benz–Asphaug disruption thresholds, momentum-conserving merges and fragmentation. Visual scale never changes the physics.</p>
+        <button id="help-close">Close</button>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

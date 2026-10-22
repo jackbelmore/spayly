@@ -1,0 +1,12 @@
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+public/textures/**/*.jpg filter=lfs diff=lfs merge=lfs -text
+*.cmd text eol=crlf
+*.ps1 text eol=crlf

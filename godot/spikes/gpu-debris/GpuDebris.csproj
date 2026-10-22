@@ -1,0 +1,10 @@
+<Project Sdk="Godot.NET.Sdk/4.8.0-dev.6">
+  <!-- Same pattern as godot/Spayly.Game: net10.0 is the only runtime installed; nuget.config in godot/ resolves the SDK. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <RootNamespace>Spayly.Spikes.GpuDebris</RootNamespace>
+  </PropertyGroup>
+</Project>
