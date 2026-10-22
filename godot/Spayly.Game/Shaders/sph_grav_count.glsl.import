@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://bhw013du7g2lf"
+path="res://.godot/imported/sph_grav_count.glsl-0a489b0aaeb2ea7015d33d432e19f1a3.res"
+
+[deps]
+
+source_file="res://Shaders/sph_grav_count.glsl"
+dest_files=["res://.godot/imported/sph_grav_count.glsl-0a489b0aaeb2ea7015d33d432e19f1a3.res"]
+
+[params]
+

@@ -1,0 +1,95 @@
+import { createRequire } from 'node:module'; const require = createRequire(import.meta.url)
+import { it } from 'vitest'
+import { Universe } from '<repo>/src/sim/universe'
+import { makeBody, Body } from '<repo>/src/sim/body'
+import { TestParticles, populateBelts } from '<repo>/src/sim/particles'
+import { AU, G, SUN_MASS, DAY } from '<repo>/src/sim/constants'
+import { sub, add, scale, v3 } from '<repo>/src/sim/vec'
+
+const vis = { color: '#fff', albedo: 0.3 }
+const quad = (q: number, x: number, y: number) =>
+  q === 0 ? { x, y, z: 0 } : q === 1 ? { x: -y, y: x, z: 0 } : q === 2 ? { x: -x, y: -y, z: 0 } : { x: y, y: -x, z: 0 }
+function planet(id: string, aAU: number, mass: number, radius: number, q: number): Body {
+  const a = aAU * AU
+  const v = Math.sqrt((G * SUN_MASS) / a)
+  return makeBody({ id, name: id, kind: 'planet', surface: 'rock', mass, radius, pos: quad(q, a, 0), vel: quad(q, 0, v), visual: vis, seed: 5 })
+}
+function build(withPlanets: boolean) {
+  const vE = Math.sqrt((G * SUN_MASS) / AU)
+  const vM = Math.sqrt((G * 5.9722e24) / 384400)
+  const bodies = [
+    makeBody({ id: 'sun', name: 'Sun', kind: 'star', surface: 'star', mass: SUN_MASS, radius: 695700, visual: vis, seed: 1 }),
+    makeBody({ id: 'earth', name: 'Earth', kind: 'planet', surface: 'rock', mass: 5.9722e24, radius: 6371, pos: { x: AU, y: 0, z: 0 }, vel: { x: 0, y: vE, z: 0.001 }, visual: vis, seed: 2 }),
+    makeBody({ id: 'moon', name: 'Moon', kind: 'moon', surface: 'rock', mass: 7.342e22, radius: 1737.4, pos: { x: AU + 384400, y: 0, z: 0 }, vel: { x: 0, y: vE + vM, z: 0.05 }, visual: vis, seed: 3 }),
+  ]
+  if (withPlanets) {
+    bodies.push(
+      planet('mercury', 0.387, 3.3011e23, 2439.7, 1),
+      planet('venus', 0.723, 4.8675e24, 6051.8, 2),
+      planet('mars', 1.524, 6.4171e23, 3389.5, 3),
+      planet('jupiter', 5.2028, 1.898e27, 69911, 1),
+      planet('saturn', 9.537, 5.683e26, 58232, 2),
+      planet('uranus', 19.19, 8.681e25, 25362, 3),
+      planet('neptune', 30.07, 1.024e26, 24622, 0),
+    )
+  }
+  const u = new Universe(2451545)
+  u.setBodies(bodies)
+  const b = u.barycentre()
+  for (const x of u.bodies) { x.pos = sub(x.pos, b.pos); x.vel = sub(x.vel, b.vel) }
+  return u
+}
+it('golden', () => {
+  const out: any = {}
+  const u = build(false)
+  out.e0 = u.energy()
+  let subs = 0
+  for (let i = 0; i < 30; i++) { u.step(DAY); subs += u.substepsLastFrame }
+  out.substeps = subs
+  out.time = u.time
+  out.earth = u.byId('earth')!.pos
+  out.moonVel = u.byId('moon')!.vel
+  out.e1 = u.energy()
+  out.dyn = u.shortestDynamicalTime
+
+  const w = build(true)
+  let subsW = 0
+  for (let i = 0; i < 30; i++) { w.step(DAY); subsW += w.substepsLastFrame }
+  out.planetsSubsteps = subsW
+  out.planetsEarth = w.byId('earth')!.pos
+  out.planetsE = w.energy()
+
+  const c = build(true)
+  const earth = c.byId('earth')!
+  const dir = { x: 0, y: 1, z: 0 }
+  c.add(makeBody({ id: 'theia', name: 'Theia', kind: 'asteroid', surface: 'rock', mass: 6.4e23, radius: 3390,
+    pos: add(earth.pos, scale(dir, earth.radius + 3390 + 300)), vel: add(earth.vel, scale(dir, -60)), visual: vis, seed: 6 }))
+  const n0 = c.bodies.length
+  c.maxPairEvalsPerFrame = 60 * (n0 * (n0 - 1)) / 2
+  const events: any[] = []
+  c.collisionHandlers.push((ev, uni) => {
+    events.push({ a: ev.a.id, b: ev.b.id, time: ev.time, posA: ev.posA, posB: ev.posB })
+    const e = uni.byId('earth')!, t = uni.byId('theia')
+    if (!t) return
+    const m = e.mass + t.mass
+    const v = scale(add(scale(e.vel, e.mass), scale(t.vel, t.mass)), 1 / m)
+    uni.remove(t); e.mass = m; e.vel = v
+    for (let k = 0; k < 12; k++) {
+      const off = quad(k % 4, 20000 + 1000 * k, 0)
+      uni.add(makeBody({ id: 'frag' + k, name: 'frag', kind: 'fragment', surface: 'rock', mass: 1e18, radius: 50, pos: add(e.pos, off), vel: e.vel, visual: vis, seed: 7 }))
+    }
+  })
+  const adv = c.step(3600)
+  out.collide = { n0, adv, events, n: c.bodies.length, warpLimited: c.warpLimited, pairEvals: c.pairEvalsLastFrame, substeps: c.substepsLastFrame, earth: c.byId('earth')!.pos, frag0: c.byId('frag0')!.pos }
+
+  const sun = makeBody({ id: 'sun', name: 'Sun', kind: 'star', surface: 'star', mass: SUN_MASS, radius: 695700, visual: vis, seed: 1 })
+  const jup = makeBody({ id: 'jupiter', name: 'Jupiter', kind: 'planet', surface: 'gas', mass: 1.898e27, radius: 69911, pos: { x: 0, y: 5.2 * AU, z: 0 }, visual: vis, seed: 4 })
+  const p = new TestParticles(40)
+  populateBelts(p, sun, jup, { belt: 20, trojan: 10, kuiper: 10 })
+  out.count = p.count
+  out.p = [0, 20, 21, 30].map((i) => ({ i, pos: Array.from(p.pos.slice(i * 3, i * 3 + 3)), vel: Array.from(p.vel.slice(i * 3, i * 3 + 3)), family: p.family[i] }))
+  p.computeAccelerations([sun, jup])
+  for (let i = 0; i < 10; i++) p.step(DAY, [sun, jup])
+  out.pAfter = Array.from(p.pos.slice(0, 3))
+  require('node:fs').writeFileSync('<out>', JSON.stringify(out, null, 1))
+})

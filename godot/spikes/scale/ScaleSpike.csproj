@@ -1,0 +1,13 @@
+<Project Sdk="Godot.NET.Sdk/4.8.0-dev.6">
+
+  <!-- Same pattern as Spayly.Game.csproj: no TargetFramework from the SDK, GodotSharp dev6 ships net8.0 only,
+       net10.0 is the only runtime installed here. No ProjectReference: this spike defines its own Vec3d
+       (M1c task says not to add it to Spayly.Sim) and needs nothing else from the game or sim projects. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Spayly.Spikes.Scale</RootNamespace>
+  </PropertyGroup>
+
+</Project>

@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://dq7qfdnogdbir"
+path="res://.godot/imported/sph_kick.glsl-9ed6d668886e4a6d6c2a5fb4368ea6dc.res"
+
+[deps]
+
+source_file="res://Shaders/sph_kick.glsl"
+dest_files=["res://.godot/imported/sph_kick.glsl-9ed6d668886e4a6d6c2a5fb4368ea6dc.res"]
+
+[params]
+

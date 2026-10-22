@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://cor23wcupw5mg"
+path="res://.godot/imported/sph_grav_leaf.glsl-a671d03bb22ade2aafe2f59019e323dd.res"
+
+[deps]
+
+source_file="res://Shaders/sph_grav_leaf.glsl"
+dest_files=["res://.godot/imported/sph_grav_leaf.glsl-a671d03bb22ade2aafe2f59019e323dd.res"]
+
+[params]
+

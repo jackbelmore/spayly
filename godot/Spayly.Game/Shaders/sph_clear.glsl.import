@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://ba728rlxn7byn"
+path="res://.godot/imported/sph_clear.glsl-2f741e8565bce697ee736519e9423014.res"
+
+[deps]
+
+source_file="res://Shaders/sph_clear.glsl"
+dest_files=["res://.godot/imported/sph_clear.glsl-2f741e8565bce697ee736519e9423014.res"]
+
+[params]
+

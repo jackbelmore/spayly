@@ -1,0 +1,28 @@
+; Engine configuration file.
+; Hand-written; keep it minimal. CaptureDriver is an autoload so any scene can be measured.
+
+config_version=5
+
+[application]
+
+config/name="GpuDebris"
+run/main_scene="res://Main.tscn"
+config/features=PackedStringArray("4.8", "C#", "Forward Plus")
+
+[autoload]
+
+CaptureDriver="*res://CaptureDriver.cs"
+
+[display]
+
+window/size/viewport_width=1600
+window/size/viewport_height=900
+window/vsync/vsync_mode=0
+
+[dotnet]
+
+project/assembly_name="GpuDebris"
+
+[rendering]
+
+renderer/rendering_method="forward_plus"

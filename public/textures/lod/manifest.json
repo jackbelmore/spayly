@@ -1,0 +1,328 @@
+{
+ "sun.jpg": {
+  "width": 4096,
+  "height": 2048,
+  "lods": [
+   512,
+   2048
+  ]
+ },
+ "mercury.jpg": {
+  "width": 5760,
+  "height": 2880,
+  "lods": [
+   512,
+   2048
+  ]
+ },
+ "venus_surface.jpg": {
+  "width": 8192,
+  "height": 4096,
+  "lods": [
+   512,
+   2048
+  ]
+ },
+ "venus_atmosphere.jpg": {
+  "width": 2048,
+  "height": 1024,
+  "lods": [
+   512
+  ]
+ },
+ "earth_day.jpg": {
+  "width": 16384,
+  "height": 8192,
+  "lods": [
+   512,
+   2048
+  ]
+ },
+ "earth_night.jpg": {
+  "width": 13500,
+  "height": 6750,
+  "lods": [
+   512,
+   2048
+  ]
+ },
+ "earth_clouds.jpg": {
+  "width": 8192,
+  "height": 4096,
+  "lods": [
+   512,
+   2048
+  ]
+ },
+ "earth_normal.jpg": {
+  "width": 8192,
+  "height": 4096,
+  "lods": [
+   512,
+   2048
+  ]
+ },
+ "earth_specular.jpg": {
+  "width": 8192,
+  "height": 4096,
+  "lods": [
+   512,
+   2048
+  ]
+ },
+ "moon.jpg": {
+  "width": 16384,
+  "height": 8192,
+  "lods": [
+   512,
+   2048
+  ]
+ },
+ "mars.jpg": {
+  "width": 16384,
+  "height": 8192,
+  "lods": [
+   512,
+   2048
+  ]
+ },
+ "jupiter.jpg": {
+  "width": 8192,
+  "height": 4096,
+  "lods": [
+   512,
+   2048
+  ]
+ },
+ "saturn.jpg": {
+  "width": 2048,
+  "height": 1024,
+  "lods": [
+   512
+  ]
+ },
+ "uranus.jpg": {
+  "width": 2048,
+  "height": 1024,
+  "lods": [
+   512
+  ]
+ },
+ "neptune.jpg": {
+  "width": 2048,
+  "height": 1024,
+  "lods": [
+   512
+  ]
+ },
+ "milky_way.jpg": {
+  "width": 6000,
+  "height": 3000,
+  "lods": [
+   512,
+   2048
+  ]
+ },
+ "phobos.jpg": {
+  "width": 4096,
+  "height": 2048,
+  "lods": [
+   512,
+   2048
+  ]
+ },
+ "deimos.jpg": {
+  "width": 2048,
+  "height": 1024,
+  "lods": [
+   512
+  ]
+ },
+ "io.jpg": {
+  "width": 8192,
+  "height": 4096,
+  "lods": [
+   512,
+   2048
+  ]
+ },
+ "europa.jpg": {
+  "width": 16384,
+  "height": 8192,
+  "lods": [
+   512,
+   2048
+  ]
+ },
+ "ganymede.jpg": {
+  "width": 8192,
+  "height": 4096,
+  "lods": [
+   512,
+   2048
+  ]
+ },
+ "callisto.jpg": {
+  "width": 8192,
+  "height": 4096,
+  "lods": [
+   512,
+   2048
+  ]
+ },
+ "mimas.jpg": {
+  "width": 4096,
+  "height": 2048,
+  "lods": [
+   512,
+   2048
+  ]
+ },
+ "enceladus.jpg": {
+  "width": 15956,
+  "height": 7978,
+  "lods": [
+   512,
+   2048
+  ]
+ },
+ "tethys.jpg": {
+  "width": 8192,
+  "height": 4096,
+  "lods": [
+   512,
+   2048
+  ]
+ },
+ "dione.jpg": {
+  "width": 8192,
+  "height": 4096,
+  "lods": [
+   512,
+   2048
+  ]
+ },
+ "rhea.jpg": {
+  "width": 12004,
+  "height": 6002,
+  "lods": [
+   512,
+   2048
+  ]
+ },
+ "titan.jpg": {
+  "width": 2880,
+  "height": 1440,
+  "lods": [
+   512,
+   2048
+  ]
+ },
+ "iapetus.jpg": {
+  "width": 8192,
+  "height": 4096,
+  "lods": [
+   512,
+   2048
+  ]
+ },
+ "miranda.jpg": {
+  "width": 1440,
+  "height": 720,
+  "lods": [
+   512
+  ]
+ },
+ "ariel.jpg": {
+  "width": 1440,
+  "height": 720,
+  "lods": [
+   512
+  ]
+ },
+ "umbriel.jpg": {
+  "width": 1440,
+  "height": 720,
+  "lods": [
+   512
+  ]
+ },
+ "titania.jpg": {
+  "width": 1440,
+  "height": 720,
+  "lods": [
+   512
+  ]
+ },
+ "oberon.jpg": {
+  "width": 1440,
+  "height": 720,
+  "lods": [
+   512
+  ]
+ },
+ "triton.jpg": {
+  "width": 8192,
+  "height": 4096,
+  "lods": [
+   512,
+   2048
+  ]
+ },
+ "charon.jpg": {
+  "width": 6000,
+  "height": 3000,
+  "lods": [
+   512,
+   2048
+  ]
+ },
+ "pluto.jpg": {
+  "width": 8192,
+  "height": 4096,
+  "lods": [
+   512,
+   2048
+  ]
+ },
+ "vesta.jpg": {
+  "width": 3560,
+  "height": 1780,
+  "lods": [
+   512,
+   2048
+  ]
+ },
+ "ceres.jpg": {
+  "width": 7380,
+  "height": 3690,
+  "lods": [
+   512,
+   2048
+  ]
+ },
+ "eris.jpg": {
+  "width": 4096,
+  "height": 2048,
+  "lods": [
+   512,
+   2048
+  ]
+ },
+ "haumea.jpg": {
+  "width": 4096,
+  "height": 2048,
+  "lods": [
+   512,
+   2048
+  ]
+ },
+ "makemake.jpg": {
+  "width": 4096,
+  "height": 2048,
+  "lods": [
+   512,
+   2048
+  ]
+ }
+}

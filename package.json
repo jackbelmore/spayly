@@ -1,0 +1,19 @@
+{
+  "name": "spayly",
+  "private": true,
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "version": "0.1.0",
+  "description": "Solar-system sandbox with real N-body physics, a Godot 4.8 game. Node is only tooling: texture bake and ephemeris fetch.",
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "assets": "node scripts/fetch-assets.mjs",
+    "textures": "node godot/tools/prepare-textures.mjs",
+    "ephemeris": "node scripts/fetch-ephemeris.mjs"
+  },
+  "devDependencies": {
+    "sharp": "^0.35.4",
+    "typescript": "^5.9.0",
+    "vite": "^8.3.0"
+  }
+}

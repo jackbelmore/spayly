@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://bxrklg2j28eya"
+path="res://.godot/imported/sph_scan.glsl-2c199fd21e27c922a2fdcd0a6c42e29c.res"
+
+[deps]
+
+source_file="res://Shaders/sph_scan.glsl"
+dest_files=["res://.godot/imported/sph_scan.glsl-2c199fd21e27c922a2fdcd0a6c42e29c.res"]
+
+[params]
+

@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://dvomh4g00erla"
+path="res://.godot/imported/sph_kick_drift.glsl-6a971db4254537d6b09b999164fe2fc0.res"
+
+[deps]
+
+source_file="res://Shaders/sph_kick_drift.glsl"
+dest_files=["res://.godot/imported/sph_kick_drift.glsl-6a971db4254537d6b09b999164fe2fc0.res"]
+
+[params]
+

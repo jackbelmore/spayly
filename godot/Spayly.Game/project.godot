@@ -1,0 +1,43 @@
+; Engine configuration file.
+; Hand-written; keep it minimal. CaptureDriver is an autoload so any scene can be measured.
+
+config_version=5
+
+[application]
+
+config/name="Spayly"
+run/main_scene="res://Main.tscn"
+config/features=PackedStringArray("4.8", "C#", "Forward Plus")
+
+[autoload]
+
+CaptureDriver="*res://Capture/CaptureDriver.cs"
+
+[display]
+
+window/size/viewport_width=1600
+window/size/viewport_height=900
+; The HUD is laid out in px for 1600×900: scale 2D to the window (2.4× at 4K) while 3D still renders at full resolution.
+; Every screen-space calculation goes through GetVisibleRect / UnprojectPosition, which are in these scaled units.
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+; Uncapped so dt_ms measures throughput rather than the monitor's refresh.
+window/vsync/vsync_mode=0
+
+[dotnet]
+
+project/assembly_name="Spayly.Game"
+
+[editor]
+
+; One map at a time on the first import: a 16K streamed map peaks at ~2.2 GB RSS (spike M1b), and 44 of them in
+; parallel would not fit next to everything else on this machine.
+import/use_multiple_threads=false
+
+[rendering]
+
+renderer/rendering_method="forward_plus"
+; Engine mip streaming for the planet maps (spike M1b); the budget is what lets far maps drop.
+textures/streaming/enabled=true
+textures/streaming/memory_budget_enabled=true
+textures/streaming/memory_budget_mb=2048

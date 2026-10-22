@@ -1,0 +1,25 @@
+import { createRequire } from 'node:module'; const require = createRequire(import.meta.url)
+import { it } from 'vitest'
+import { createSolarSystem } from '<repo>/src/sim/catalog'
+import { Universe } from '<repo>/src/sim/universe'
+import { DAY, YEAR, AU } from '<repo>/src/sim/constants'
+import { length, sub } from '<repo>/src/sim/vec'
+
+it('golden', () => {
+  const { bodies, epochJD } = createSolarSystem(new Date('2000-01-01T12:00:00Z'))
+  const u = new Universe(epochJD); u.setBodies(bodies)
+  const out: Record<string, unknown> = { epochJD, n: bodies.length }
+  const sun = u.byId('sun')!, earth = u.byId('earth')!, moon = u.byId('moon')!
+  // Universe.step writes b.pos.x/y/z in place, so every recorded vector is copied, never referenced.
+  out.earth0 = { pos: { ...earth.pos }, vel: { ...earth.vel }, mass: earth.mass, radius: earth.radius }
+  out.moon0 = { pos: { ...moon.pos }, vel: { ...moon.vel } }
+  out.sun0 = { pos: { ...sun.pos }, vel: { ...sun.vel }, mass: sun.mass }
+  out.e0 = u.energy()
+  const b = u.barycentre(); out.bary = b
+  let t = 0, steps = 0
+  while (t < 30 * DAY) { u.step(DAY); t += DAY; steps += u.substepsLastFrame }
+  out.after30d = { time: u.time, substeps: steps, earthPos: { ...earth.pos }, earthVel: { ...earth.vel }, energy: u.energy() }
+  while (t < YEAR) { u.step(DAY); t += DAY }
+  out.after1y = { time: u.time, earthPos: { ...earth.pos }, energy: u.energy(), earthSunAU: length(sub(earth.pos, sun.pos)) / AU }
+  require('node:fs').writeFileSync('<out>', JSON.stringify(out, null, 1))
+})
