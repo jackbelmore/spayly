@@ -1,3 +1,5 @@
+<p align="center"><img src="docs/media/banner.jpg" alt="spayly: a black hole's accretion disc, gravitationally lensed" width="100%"></p>
+
 # spayly
 
 [![CI](https://github.com/jackbelmore/spayly/actions/workflows/ci.yml/badge.svg)](https://github.com/jackbelmore/spayly/actions/workflows/ci.yml)
@@ -12,10 +14,31 @@ The game is a native Godot 4.8 build (C#, GPU SPH collisions, black holes) in `g
 see [`docs/godot/setup.md`](docs/godot/setup.md). It began as a browser app (Vite + three.js), which is kept, no longer
 developed, on the [`web-version`](https://github.com/jackbelmore/spayly/tree/web-version) branch.
 
-![spayly: accretion disc and gravitational lensing](docs/media/demo.gif)
-
 **[Watch the 73-second demo video](docs/media/demo.mp4)**: the solar system, Earth, Saturn and Jupiter up close, a Chicxulub-class
 impact, a Theia giant impact in GPU SPH, a tidal disruption and a black hole's accretion disc. Recorded in-game.
+
+## Features
+
+Every clip is recorded in-game. Full-quality MP4s are on the [Releases page](https://github.com/jackbelmore/spayly/releases/latest).
+
+<table>
+<tr>
+<td width="50%"><img src="docs/media/navigate.webp" alt="Clicking Earth and flying to it"><br><b>Click and fly.</b> Click any body or its label to select it, double-click to fly there, and wheel down to its surface.</td>
+<td width="50%"><img src="docs/media/blackhole.webp" alt="A black hole dropped into the solar system"><br><b>Drop a black hole in.</b> The forecast shows who gets torn apart. Crank the time warp and watch it swallow the Sun and capture the planets.</td>
+</tr>
+<tr>
+<td><img src="docs/media/time.webp" alt="Time warp, pause and rewind"><br><b>Bend time.</b> Warp up to millions of times real speed, pause, then rewind. Gravity runs backwards exactly.</td>
+<td><img src="docs/media/sun-mass.webp" alt="Changing the Sun's mass live"><br><b>Change anything live.</b> Make the Sun ten times heavier and it burns blue-white while the orbits tighten. Make it a tenth and it fades to a red dwarf as the planets drift away.</td>
+</tr>
+<tr>
+<td><img src="docs/media/asteroid.webp" alt="Firing an asteroid at the Moon"><br><b>Throw asteroids.</b> Aim at any body and fire. The fireball, blast ring, ejecta and crater all follow from the impact energy.</td>
+<td><img src="docs/media/tidal-disruption.webp" alt="A star torn apart by a black hole"><br><b>Tidal disruption.</b> A star falls into a million-solar-mass black hole: an Einstein ring, two lensed images, then the star is stretched apart and the disc lights up.</td>
+</tr>
+<tr>
+<td><img src="docs/media/tabletop.webp" alt="Tabletop view and flying above Saturn"><br><b>Tabletop view.</b> <code>T</code> pulls back to the whole system, and <code>F</code> flies above whatever you select.</td>
+<td><img src="docs/media/saturn.webp" alt="Saturn's rings close up"><br><b>Up close.</b> Real spacecraft maps up to 16K, Saturn's rings with the planet's shadow across them, and lighting from the actual Sun.</td>
+</tr>
+</table>
 
 ## Play the Godot build
 
