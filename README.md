@@ -38,6 +38,14 @@ Every clip is recorded in-game. Full-quality MP4s are on the [Releases page](htt
 <td><img src="docs/media/tabletop.webp" alt="Tabletop view and flying above Saturn"><br><b>Tabletop view.</b> <code>T</code> pulls back to the whole system, and <code>F</code> flies above whatever you select.</td>
 <td><img src="docs/media/saturn.webp" alt="Saturn's rings close up"><br><b>Up close.</b> Real spacecraft maps up to 16K, Saturn's rings with the planet's shadow across them, and lighting from the actual Sun.</td>
 </tr>
+<tr>
+<td><img src="docs/media/shatter.webp" alt="Earth shattered by a giant impact"><br><b>Shatter a planet.</b> Hit Earth hard enough and it doesn't crater, it shatters: 64 molten fragments and a debris cloud, all real bodies that keep orbiting.</td>
+<td><img src="docs/media/undo.webp" alt="Ctrl+Z restoring the shattered Earth"><br><b>Undo anything.</b> <code>Ctrl+Z</code> takes back any action, even the end of the world.</td>
+</tr>
+<tr>
+<td><img src="docs/media/erase.webp" alt="The erase brush clearing debris"><br><b>Erase brush.</b> <code>Z</code> sweeps debris and fragments out of the simulation, and the mouse wheel resizes the brush.</td>
+<td><img src="docs/media/surface-zoom.webp" alt="Zooming from a full Moon to its craters"><br><b>Down to the surface.</b> Fly from a full Moon down to its craters on NASA's 16K LRO map (Texture detail: Ultra).</td>
+</tr>
 </table>
 
 ## Play the Godot build
