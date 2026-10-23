@@ -14,6 +14,9 @@ The game is a native Godot 4.8 build (C#, GPU SPH collisions, black holes) in `g
 see [`docs/godot/setup.md`](docs/godot/setup.md). It began as a browser app (Vite + three.js), which is kept, no longer
 developed, on the [`web-version`](https://github.com/jackbelmore/spayly/tree/web-version) branch.
 
+<p align="center"><img src="docs/media/hero.webp" alt="Earth turning from night into day, rendered in-game with 16K NASA maps" width="100%"></p>
+<p align="center"><i>Earth in-game: 16K NASA maps, clouds, city lights and ocean glint. <a href="https://github.com/jackbelmore/spayly/releases/latest">Full 4K video on the Releases page.</a></i></p>
+
 **[Watch the 73-second demo video](docs/media/demo.mp4)**: the solar system, Earth, Saturn and Jupiter up close, a Chicxulub-class
 impact, a Theia giant impact in GPU SPH, a tidal disruption and a black hole's accretion disc. Recorded in-game.
 
